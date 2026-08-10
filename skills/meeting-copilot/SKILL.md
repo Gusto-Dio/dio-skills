@@ -105,3 +105,33 @@ o loop, e `✅ Finalizado às <hora>` depois do encerramento.
 
 6. Avise o usuário que o acompanhamento começou, com o link da página criada, e
    siga para a Phase 1.
+
+## Phase 1 — Loop ao vivo (~60-90s por ciclo)
+
+Invoque a skill `loop` (Skill tool, `skill: "loop"`, sem intervalo fixo — deixe
+o self-pacing dinâmico escolher, o piso é 60s) passando como prompt o ciclo de
+atualização abaixo, já com `<SOURCE_ID>` e `<MEETING_PAGE_ID>` substituídos
+pelos valores reais desta reunião:
+
+> Re-busque `notion-fetch({ id: "<SOURCE_ID>", include_transcript: true })`. Se
+> o transcript ainda estiver vazio ou sem conteúdo, não faça nada neste ciclo.
+> Caso contrário, regenere as quatro seções do Section template a partir do
+> transcript COMPLETO atual (não incremental — não tente diferenciar do que já
+> foi escrito antes), usando o perfil e contexto de carreira do usuário (já na
+> memória da sessão) para a seção de Take-aways & sugestões. Sobrescreva o
+> conteúdo da página `<MEETING_PAGE_ID>` com
+> `notion-update-page({ page_id: "<MEETING_PAGE_ID>", command: "replace_content",
+> new_str: "<section template regenerado>" })`, mantendo a `<STATUS_LINE>` como
+> `🟢 Ao vivo — atualizado automaticamente a cada ~1 min`. Continue até o
+> usuário avisar que a reunião acabou.
+
+## Phase 2 — Encerramento
+
+Quando o usuário indicar que a reunião terminou (ex: "acabou", "pode parar",
+"encerra"):
+
+1. Pare o loop (`ScheduleWakeup({ stop: true })` se houver um wakeup pendente
+   da Phase 1).
+2. Faça uma última passada de atualização (mesma lógica da Phase 1, uma vez).
+3. Sobrescreva a `<STATUS_LINE>` para `✅ Finalizado às <hora atual>`.
+4. Confirme ao usuário que a página final está pronta, com o link.
