@@ -9,7 +9,7 @@ allowed-tools: [mcp__claude_ai_Notion_Gusto__notion-fetch, mcp__claude_ai_Notion
 
 Monitora a transcrição de uma reunião no Notion (gerada em inglês) e escreve, em
 português, uma interpretação personalizada — temas discutidos, pontos de atenção,
-próximos passos e sugestões — numa página pessoal, atualizando a cada ~60-90s
+próximos passos e sugestões — numa página de reunião, atualizando a cada ~60-90s
 enquanto a reunião estiver rolando.
 
 ## Config
