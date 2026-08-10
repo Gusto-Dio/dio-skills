@@ -2,7 +2,7 @@
 name: meeting-copilot
 description: Use when the user pastes a link to a Notion meeting-note page (Notion's live AI transcript) and wants a personalized, live Portuguese interpretation of the meeting written into their personal Dio-lab hub. Keeps updating roughly every 60-90s until the user says the meeting is over.
 requires_mcp: [notiongusto]
-allowed-tools: [mcp__claude_ai_Notion_Gusto__notion-fetch, mcp__claude_ai_Notion_Gusto__notion-create-pages, mcp__claude_ai_Notion_Gusto__notion-update-page]
+allowed-tools: [mcp__claude_ai_Notion_Gusto__notion-fetch, mcp__claude_ai_Notion_Gusto__notion-create-pages, mcp__claude_ai_Notion_Gusto__notion-update-page, Skill, ScheduleWakeup]
 ---
 
 # /meeting-copilot — Live Portuguese meeting interpreter
