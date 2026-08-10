@@ -86,7 +86,8 @@ o loop, e `✅ Finalizado às <hora>` depois do encerramento.
    - Guarde o ID retornado como `<DAY_ID>`.
 
 5. Crie a página da reunião abaixo de `<DAY_ID>`, com o Section template
-   preenchido a partir do `<TRANSCRIPT>` atual e `<STATUS_LINE>` =
+   preenchido a partir do `<TRANSCRIPT>` atual, usando `<TITLE>` e `<SOURCE_URL>`
+   (já extraídos no passo 2) na linha do link, e `<STATUS_LINE>` =
    `🟢 Ao vivo — atualizado automaticamente a cada ~1 min`:
 
    ```
