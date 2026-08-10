@@ -109,29 +109,37 @@ o loop, e `✅ Finalizado às <hora>` depois do encerramento.
 ## Phase 1 — Loop ao vivo (~60-90s por ciclo)
 
 Invoque a skill `loop` (Skill tool, `skill: "loop"`, sem intervalo fixo — deixe
-o self-pacing dinâmico escolher, o piso é 60s) passando como prompt o ciclo de
-atualização abaixo, já com `<SOURCE_ID>` e `<MEETING_PAGE_ID>` substituídos
-pelos valores reais desta reunião:
+o self-pacing dinâmico escolher; o piso técnico é 60s, então cada disparo tende
+a cair perto de ~60-90s) passando como prompt o ciclo de atualização abaixo, já
+com `<SOURCE_ID>` e `<MEETING_PAGE_ID>` substituídos pelos valores reais desta
+reunião:
 
-> Re-busque `notion-fetch({ id: "<SOURCE_ID>", include_transcript: true })`. Se
-> o transcript ainda estiver vazio ou sem conteúdo, não faça nada neste ciclo.
-> Caso contrário, regenere as quatro seções do Section template a partir do
-> transcript COMPLETO atual (não incremental — não tente diferenciar do que já
-> foi escrito antes), usando o perfil e contexto de carreira do usuário (já na
-> memória da sessão) para a seção de Take-aways & sugestões. Sobrescreva o
-> conteúdo da página `<MEETING_PAGE_ID>` com
-> `notion-update-page({ page_id: "<MEETING_PAGE_ID>", command: "replace_content",
-> new_str: "<section template regenerado>" })`, mantendo a `<STATUS_LINE>` como
-> `🟢 Ao vivo — atualizado automaticamente a cada ~1 min`. Continue até o
-> usuário avisar que a reunião acabou.
+> Re-busque `notion-fetch({ id: "<SOURCE_ID>", include_transcript: true })` para
+> obter `<TÍTULO>` (ou o fallback `Reunião — <data> <hora>` se o título for só
+> uma data/hora automática), `<SOURCE_URL>` e o transcript atual. Se o
+> transcript ainda estiver vazio ou sem conteúdo, não faça nada neste ciclo.
+> Caso contrário, reescreva a página inteira com o Section template completo —
+> a linha `**Reunião original (inglês):** [<TÍTULO>](<SOURCE_URL>)`, a linha
+> `**Status:** <STATUS_LINE>`, e as quatro seções `## Temas discutidos`,
+> `## Pontos de atenção`, `## Próximos passos` e `## Take-aways & sugestões` —
+> regenerando as quatro seções a partir do transcript COMPLETO atual (não
+> incremental — não tente diferenciar do que já foi escrito antes), usando o
+> perfil e contexto de carreira do usuário (já na memória da sessão) para a
+> seção de Take-aways & sugestões. Sobrescreva o conteúdo da página
+> `<MEETING_PAGE_ID>` com `notion-update-page({ page_id: "<MEETING_PAGE_ID>",
+> command: "replace_content", new_str: "<section template regenerado>" })`,
+> mantendo `<STATUS_LINE>` = `🟢 Ao vivo — atualizado automaticamente a cada ~1
+> min`. Este ciclo nunca decide encerrar por conta própria — a decisão de parar
+> é sempre um comando explícito do usuário, tratado pela Phase 2, fora do
+> disparo normal do loop.
 
 ## Phase 2 — Encerramento
 
 Quando o usuário indicar que a reunião terminou (ex: "acabou", "pode parar",
 "encerra"):
 
-1. Pare o loop (`ScheduleWakeup({ stop: true })` se houver um wakeup pendente
-   da Phase 1).
+1. Pare o loop chamando `ScheduleWakeup({ stop: true })` — este é o único lugar
+   que encerra o acompanhamento; a Phase 1 nunca chama isso por conta própria.
 2. Faça uma última passada de atualização (mesma lógica da Phase 1, uma vez).
-3. Sobrescreva a `<STATUS_LINE>` para `✅ Finalizado às <hora atual>`.
+3. Sobrescreva a `<STATUS_LINE>` para `✅ Finalizado às <hora>`.
 4. Confirme ao usuário que a página final está pronta, com o link.
